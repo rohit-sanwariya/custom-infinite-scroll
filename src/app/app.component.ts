@@ -1,22 +1,21 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
-import { Observable } from 'rxjs';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Observable, BehaviorSubject, map, take } from 'rxjs';
+import { PhotosService } from './photos.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  changeDetection:ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
-  pagination:{pagenumber:number,limit:number}={
-    pagenumber:1,limit:10,
-  }
-  photos$ : Observable<Array<any>> = this._http.get<Array<any>>(`http://localhost:3000/photos?_page=${this.pagination.pagenumber}&_limit=${this.pagination.limit}`)
-  constructor(
-    private _http:HttpClient
-  ){}
+  photos$: Observable<Array<any>> =  this._service.getPhotos();
 
-  onScroll(){
-    console.log('end')
+  constructor(private _http: HttpClient, public _service: PhotosService) {}
+
+  reachedEnd(event: boolean): void {
+    if (this._service.loading)return;
+    this.photos$ = this._service.getPhotos();
   }
 }

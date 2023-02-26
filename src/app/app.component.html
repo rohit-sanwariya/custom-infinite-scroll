@@ -1,3 +1,10 @@
-<div >
+<div class="container" appInfiniteScroll (reachedEnd)="reachedEnd($event)" style="height:100vh;overflow:scroll">
+  <div *ngFor="let photo of (photos$  | async );let idx = index;">
 
+    <h1>{{idx+1}}</h1>
+    <img loading="lazy" [src]="photo.url" alt="random photo">
+    <ng-container *ngIf="_service.loading">
+      loading...............
+    </ng-container>
+  </div>
 </div>
